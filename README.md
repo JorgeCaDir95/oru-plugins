@@ -19,7 +19,7 @@ With it installed, your coding agent:
 **Claude Code**
 
 ```bash
-claude plugin marketplace add orubrain/oru-plugins
+claude plugin marketplace add JorgeCaDir95/oru-plugins
 claude plugin install oru@orubrain
 ```
 
@@ -29,7 +29,7 @@ Orubrain account. Then ask: *"run Oru's setup"*.
 **Codex**
 
 ```bash
-codex plugin marketplace add orubrain/oru-plugins
+codex plugin marketplace add JorgeCaDir95/oru-plugins
 ```
 
 Open `/plugins` in Codex, install **oru**, and sign in when asked.
