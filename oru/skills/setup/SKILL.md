@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Run Oru's bridge setup wizard — connect Figma via Claude Code and index it into Oru's design brain.
+description: Run Oru's setup wizard — link this folder to a project, connect Figma and Google Drive from this machine, and index them into Oru.
 user-invocable: true
 ---
 
