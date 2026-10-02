@@ -55,9 +55,10 @@ Cursor and VS Code have one-click install buttons on orubrain.com → **Agents**
 | `oru/hooks/hooks.json` | Claude Code: states the folder at session start, adds Oru context to each prompt |
 | `oru/CLAUDE-FRAGMENT.md`, `oru/AGENTS-FRAGMENT.md` | Optional lines for your project's `CLAUDE.md` / `AGENTS.md` |
 
-The per-prompt context hook calls Oru outside the MCP session, so it needs an access key in
-`ORUBRAIN_MCP_TOKEN` (orubrain.com → Agents → Advanced). Without one it stays silent and the agent
-still reaches Oru through the MCP.
+The per-prompt context hook calls Oru outside the MCP session, so it needs an access key
+(orubrain.com → Agents → Advanced). Enter it in the plugin's optional **Oru access key** setting,
+which Claude Code keeps in your system's secure storage; an `ORUBRAIN_MCP_TOKEN` already set in your
+shell still works. Without a key the hook stays silent and the agent still reaches Oru through the MCP.
 
 Codex: the plugin's hooks are not wired yet; Oru leads there through the server's instructions
 and `AGENTS-FRAGMENT.md`.

@@ -8,9 +8,12 @@ import { basename } from 'node:path';
 
 export function oruConfig() {
   return {
-    // ORUBRAIN_MCP_TOKEN is the name the Orubrain Agents page tells users to set;
-    // ORU_API_TOKEN was the plugin's earlier name and is still honoured.
-    token: process.env.ORUBRAIN_MCP_TOKEN || process.env.ORU_API_TOKEN || '',
+    // The plugin's api_token option, which Claude Code stores in secure storage
+    // and exports as CLAUDE_PLUGIN_OPTION_API_TOKEN, comes first.
+    // ORUBRAIN_MCP_TOKEN (the name the Orubrain Agents page tells users to set)
+    // and ORU_API_TOKEN (the plugin's earlier name) are still honoured.
+    token: process.env.CLAUDE_PLUGIN_OPTION_API_TOKEN
+      || process.env.ORUBRAIN_MCP_TOKEN || process.env.ORU_API_TOKEN || '',
     baseUrl: (process.env.ORU_APP_URL || 'https://orubrain.com').replace(/\/+$/, ''),
   };
 }

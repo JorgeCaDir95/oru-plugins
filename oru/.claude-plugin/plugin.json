@@ -1,8 +1,16 @@
 {
   "name": "oru",
-  "description": "Oru \u2014 your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, and bridges Figma into it.",
+  "description": "Oru — your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, and bridges Figma into it.",
   "version": "0.3.0",
   "author": {
     "name": "Orubrain"
+  },
+  "userConfig": {
+    "api_token": {
+      "type": "string",
+      "title": "Oru access key (optional)",
+      "description": "Only for the hook that adds Oru context to each prompt. Signing in to Oru through /mcp covers everything else, so you can leave this empty. Create one in orubrain.com → Agents → Advanced.",
+      "sensitive": true
+    }
   }
 }
