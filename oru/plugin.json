@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "oru",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Oru \u2014 your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, and bridges Figma into it.",
   "author": {
     "name": "Orubrain",
