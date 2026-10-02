@@ -1,0 +1,8 @@
+{
+  "name": "oru",
+  "description": "Oru \u2014 your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, and bridges Figma into it.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Orubrain"
+  }
+}

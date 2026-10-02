@@ -1,0 +1,14 @@
+{
+  "name": "orubrain",
+  "description": "Oru — your team's shared brain for business, brand and design, in every coding agent.",
+  "owner": {
+    "name": "Orubrain"
+  },
+  "plugins": [
+    {
+      "name": "oru",
+      "source": "./oru",
+      "description": "Connects Oru, keeps it in the lead on every task, and bridges Figma into it."
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "orubrain": {
+      "type": "http",
+      "url": "https://orubrain.com/api/mcp"
+    }
+  }
+}

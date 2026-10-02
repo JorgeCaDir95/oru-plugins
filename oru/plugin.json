@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "oru",
+  "version": "0.2.0",
+  "description": "Oru — your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, and bridges Figma into it.",
+  "author": { "name": "Orubrain", "url": "https://orubrain.com" },
+  "homepage": "https://orubrain.com",
+  "keywords": ["design", "brand", "figma", "memory", "mcp"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Oru",
+        "shortDescription": "Your team's shared brain for business, brand and design.",
+        "developerName": "Orubrain",
+        "category": "Productivity",
+        "websiteURL": "https://orubrain.com"
+      }
+    }
+  }
+}
