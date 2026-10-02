@@ -1,7 +1,7 @@
 {
   "name": "oru",
-  "description": "Oru — your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, and bridges Figma and Google Drive into it.",
-  "version": "0.4.0",
+  "description": "Oru — your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, and bridges Figma, Google Drive, Microsoft 365 and Slack into it.",
+  "version": "0.5.0",
   "author": {
     "name": "Orubrain"
   },

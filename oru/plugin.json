@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "oru",
-  "version": "0.4.0",
-  "description": "Oru \u2014 your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, and bridges Figma and Google Drive into it.",
+  "version": "0.5.0",
+  "description": "Oru \u2014 your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, and bridges Figma, Google Drive, Microsoft 365 and Slack into it.",
   "author": {
     "name": "Orubrain",
     "url": "https://orubrain.com"

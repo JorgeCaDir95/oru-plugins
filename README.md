@@ -13,6 +13,10 @@ With it installed, your coding agent:
 - **brings your Figma files into Oru** (screens, colors, type, components and their images),
 - **brings your Google Drive folders into Oru** (Docs, Sheets, Slides, PDFs, Word, Excel and
   PowerPoint), read-only, with the Google token kept on your machine,
+- **brings your Microsoft 365 files into Oru** (OneDrive, SharePoint and Teams files), read-only,
+- **brings the Slack channels you pick into Oru** (never direct messages),
+- **sets all of it up as a checklist**: it detects what is connected, you tick what to connect, and
+  it signs in to each one,
 - **gives you a preview link** for any design it makes, instead of writing files into your project
   until you ask for code.
 
@@ -51,11 +55,14 @@ Cursor and VS Code have one-click install buttons on orubrain.com → **Agents**
 | --- | --- |
 | `oru/.mcp.json`, `oru/mcp.json` | The `orubrain` MCP server (Claude Code / Codex) |
 | `oru/skills/oru` | How to work through Oru: context first, learnings saved, preview-first design |
-| `oru/skills/setup` | Links the folder to a project, detects Figma and Google Drive, picks what to index |
+| `oru/skills/setup` | Links the folder to a project; a checklist that detects, connects and indexes each source |
 | `oru/skills/drive` | Reads Google Drive read-only through `scripts/drive.mjs` and sends the text to Oru |
+| `oru/skills/microsoft` | Reads OneDrive, SharePoint and Teams files read-only through `scripts/microsoft.mjs` |
+| `oru/skills/slack` | Reads the Slack channels you pick through Claude Code's claude.ai Slack connector |
 | `oru/skills/sync` | Re-syncs the saved Figma files and Drive folders, only what changed |
 | `oru/agents/oru-indexer.md` | Subagent that reads Figma or Drive and sends what changed to Oru |
 | `oru/scripts/drive.mjs` | Dependency-free Google Drive reader: `login`, `status`, `list`, `read`, `logout` |
+| `oru/scripts/microsoft.mjs` | Dependency-free Microsoft Graph reader: `login-start`, `login-finish`, `status`, `sources`, `list`, `read`, `logout` |
 | `oru/hooks/hooks.json` | Claude Code: states the folder at session start, adds Oru context to each prompt |
 | `oru/CLAUDE-FRAGMENT.md`, `oru/AGENTS-FRAGMENT.md` | Optional lines for your project's `CLAUDE.md` / `AGENTS.md` |
 
@@ -90,10 +97,39 @@ users you add on its consent screen.
 | PDF | Handed to your agent, which reads it |
 | Images, video, other binaries | Skipped |
 
+## Microsoft 365
+
+`scripts/microsoft.mjs` reads OneDrive, SharePoint sites and the files of your Teams through
+Microsoft Graph, **read-only** (`Files.Read.All`, `Sites.Read.All`, plus `Team.ReadBasic.All` to list
+your Teams). It signs in with a device code: it shows a link and a code, you enter the code at
+Microsoft, and the token is stored in `~/.oru/microsoft.json` (readable only by you). Teams messages
+are not read.
+
+It needs a Microsoft Entra app (until Orubrain's own is published):
+
+1. In the [Azure portal](https://portal.azure.com) → **Microsoft Entra ID** → **App registrations** →
+   **New registration**. Any name (e.g. "Oru"); supported accounts: **any organizational directory
+   and personal Microsoft accounts**; no redirect URI.
+2. **Authentication** → **Allow public client flows** → **Yes**.
+3. **API permissions** → Microsoft Graph → **Delegated**: `Files.Read.All`, `Sites.Read.All`,
+   `Team.ReadBasic.All`, `User.Read`, `offline_access`.
+4. Save `{"client_id": "<Application (client) ID>", "tenant": "common"}` as
+   `~/.oru/microsoft-oauth-client.json`.
+
+Files are read the same way as from Drive: Word and PowerPoint as text, Excel as CSV per sheet,
+PDFs (and older Office files, which Graph converts to PDF) handed to your agent.
+
+## Slack
+
+Slack is read through Claude Code's **claude.ai Slack connector** (Slack's official MCP server), so
+there is nothing to install: sign in from `/mcp` → **claude.ai Slack**. Oru only reads the public
+channels you pick, one document per channel per month, and never direct messages. Slack is not
+available in Codex yet.
+
 ## Develop
 
 ```bash
 claude plugin validate ./ && claude plugin validate ./oru
-node --test oru/scripts/drive-lib.test.mjs
+node --test oru/scripts/drive-lib.test.mjs oru/scripts/microsoft-lib.test.mjs
 claude plugin marketplace add ./   # install from your local checkout
 ```

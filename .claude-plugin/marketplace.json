@@ -8,7 +8,7 @@
     {
       "name": "oru",
       "source": "./oru",
-      "description": "Connects Oru, keeps it in the lead on every task, and bridges Figma and Google Drive into it."
+      "description": "Connects Oru, keeps it in the lead on every task, and bridges Figma, Google Drive, Microsoft 365 and Slack into it."
     }
   ]
 }

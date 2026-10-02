@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Run Oru's setup wizard — link this folder to a project, connect Figma and Google Drive from this machine, and index them into Oru.
+description: Run Oru's setup — an interactive checklist that detects which sources are connected (Figma, Google Drive, Microsoft 365, Slack), lets you tick what to connect, signs in to each, and indexes what you choose into Oru.
 user-invocable: true
 ---
 
