@@ -133,3 +133,7 @@ claude plugin validate ./ && claude plugin validate ./oru
 node --test oru/scripts/drive-lib.test.mjs oru/scripts/microsoft-lib.test.mjs
 claude plugin marketplace add ./   # install from your local checkout
 ```
+
+To test against a local Oru, set the plugin's **Oru address** option to `http://localhost:3000`
+(`/config`, or when Claude Code asks for the plugin's settings). The MCP server and the hooks both
+follow it. Remove any separate `orubrain` server you added by hand, so the agent sees only one.

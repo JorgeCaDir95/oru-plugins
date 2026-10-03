@@ -2,7 +2,7 @@
   "mcpServers": {
     "orubrain": {
       "type": "http",
-      "url": "https://orubrain.com/api/mcp"
+      "url": "${user_config.oru_url}/api/mcp"
     }
   }
 }

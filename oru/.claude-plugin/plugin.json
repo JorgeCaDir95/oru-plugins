@@ -6,6 +6,12 @@
     "name": "Orubrain"
   },
   "userConfig": {
+    "oru_url": {
+      "type": "string",
+      "title": "Oru address",
+      "description": "Leave as is. Change it only to test a local Oru, e.g. http://localhost:3000.",
+      "default": "https://orubrain.com"
+    },
     "api_token": {
       "type": "string",
       "title": "Oru access key (optional)",

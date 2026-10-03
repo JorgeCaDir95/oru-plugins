@@ -14,7 +14,10 @@ export function oruConfig() {
     // and ORU_API_TOKEN (the plugin's earlier name) are still honoured.
     token: process.env.CLAUDE_PLUGIN_OPTION_API_TOKEN
       || process.env.ORUBRAIN_MCP_TOKEN || process.env.ORU_API_TOKEN || '',
-    baseUrl: (process.env.ORU_APP_URL || 'https://orubrain.com').replace(/\/+$/, ''),
+    // The plugin's oru_url option (CLAUDE_PLUGIN_OPTION_ORU_URL), so the hooks
+    // talk to the same Oru as the MCP server.
+    baseUrl: (process.env.CLAUDE_PLUGIN_OPTION_ORU_URL || process.env.ORU_APP_URL || 'https://orubrain.com')
+      .replace(/\/+$/, ''),
   };
 }
 
