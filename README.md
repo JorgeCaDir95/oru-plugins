@@ -15,6 +15,8 @@ With it installed, your coding agent:
   PowerPoint), read-only, with the Google token kept on your machine,
 - **brings your Microsoft 365 files into Oru** (OneDrive, SharePoint and Teams files), read-only,
 - **brings the Slack channels you pick into Oru** (never direct messages),
+- **saves your Claude Code conversations to Oru** (your private project chat, no tool output, secrets
+  stripped), so what you decide while working becomes context too,
 - **sets all of it up as a checklist**: it detects what is connected, you tick what to connect, and
   it signs in to each one,
 - **gives you a preview link** for any design it makes, instead of writing files into your project
@@ -58,12 +60,14 @@ Cursor and VS Code have one-click install buttons on orubrain.com → **Agents**
 | `oru/skills/setup` | Links the folder to a project; a checklist that detects, connects and indexes each source |
 | `oru/skills/drive` | Reads Google Drive read-only through `scripts/drive.mjs` and sends the text to Oru |
 | `oru/skills/microsoft` | Reads OneDrive, SharePoint and Teams files read-only through `scripts/microsoft.mjs` |
+| `oru/skills/conversations` | Signs this machine in to Oru and saves this agent's conversations; pause with "don't save this" |
 | `oru/skills/slack` | Reads the Slack channels you pick through Claude Code's claude.ai Slack connector |
 | `oru/skills/sync` | Re-syncs the saved Figma files and Drive folders, only what changed |
 | `oru/agents/oru-indexer.md` | Subagent that reads Figma or Drive and sends what changed to Oru |
 | `oru/scripts/drive.mjs` | Dependency-free Google Drive reader: `login`, `status`, `list`, `read`, `logout` |
 | `oru/scripts/microsoft.mjs` | Dependency-free Microsoft Graph reader: `login-start`, `login-finish`, `status`, `sources`, `list`, `read`, `logout` |
-| `oru/hooks/hooks.json` | Claude Code: states the folder at session start, adds Oru context to each prompt |
+| `oru/hooks/hooks.json` | Claude Code: states the folder at session start, adds Oru context to each prompt, saves each reply's new messages to Oru |
+| `oru/scripts/oru.mjs`, `oru/scripts/capture.mjs` | Oru sign-in for this machine, and the hook that sends conversations in the background |
 | `oru/CLAUDE-FRAGMENT.md`, `oru/AGENTS-FRAGMENT.md` | Optional lines for your project's `CLAUDE.md` / `AGENTS.md` |
 
 The per-prompt context hook calls Oru outside the MCP session, so it needs an access key
@@ -96,6 +100,17 @@ users you add on its consent screen.
 | Word | Text |
 | PDF | Handed to your agent, which reads it |
 | Images, video, other binaries | Skipped |
+
+## Conversations
+
+Once the plugin is signed in to Oru (`setup` does it, or the `conversations` skill), each Claude
+Code reply's new messages are sent, in the background, to your **private** chat for the folder's
+project in orubrain.com. Oru learns from what you say there like it does from its own chat.
+
+- Saved: your messages and the agent's replies, with one line per action it took.
+- Never saved: tool output, file contents, and secrets (stripped on your machine and again by Oru).
+- Off switch: the plugin's **Save conversations** setting; "don't save this" pauses one session.
+- Sign-in uses Oru's own OAuth (token in `~/.oru/oru.json`); an Oru access key works too.
 
 ## Microsoft 365
 
@@ -130,7 +145,7 @@ available in Codex yet.
 
 ```bash
 claude plugin validate ./ && claude plugin validate ./oru
-node --test oru/scripts/drive-lib.test.mjs oru/scripts/microsoft-lib.test.mjs
+node --test oru/scripts/*.test.mjs
 claude plugin marketplace add ./   # install from your local checkout
 ```
 

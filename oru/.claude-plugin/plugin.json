@@ -1,7 +1,7 @@
 {
   "name": "oru",
-  "description": "Oru — your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, and bridges Figma, Google Drive, Microsoft 365 and Slack into it.",
-  "version": "0.5.0",
+  "description": "Oru — your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, bridges Figma, Google Drive, Microsoft 365 and Slack into it, and saves your agent conversations.",
+  "version": "0.6.0",
   "author": {
     "name": "Orubrain"
   },
@@ -11,6 +11,12 @@
       "title": "Oru address",
       "description": "Leave as is. Change it only to test a local Oru, e.g. http://localhost:3000.",
       "default": "https://orubrain.com"
+    },
+    "save_conversations": {
+      "type": "boolean",
+      "title": "Save conversations",
+      "description": "Save this agent's conversations (your messages and its replies, without tool output or secrets) to your private chat in Oru, so Oru learns from them. Turn off to stop.",
+      "default": true
     },
     "api_token": {
       "type": "string",
