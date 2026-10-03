@@ -36,3 +36,17 @@ test('toFile gives a driveItem the same shape as a Drive file', () => {
     modifiedTime: '2026-10-02T09:00:00Z', url: 'https://contoso.sharepoint.com/Brand.docx', size: 2048,
   });
 });
+
+test('search hits and recent items become files, folders left out', async () => {
+  const { searchHitsToFiles, recentToFiles } = await import('./microsoft-lib.mjs');
+  const item = (id, extra = {}) => ({
+    id, name: `${id}.docx`, webUrl: `https://contoso.sharepoint.com/${id}`, lastModifiedDateTime: '2026-10-02T09:00:00Z',
+    parentReference: { driveId: 'b!drive' }, file: { mimeType: 'text/plain' }, ...extra,
+  });
+  const search = { value: [{ hitsContainers: [{ hits: [
+    { resource: item('A') }, { resource: item('F', { folder: {}, file: undefined }) },
+  ] }] }] };
+  assert.deepEqual(searchHitsToFiles(search).map((f) => f.id), ['b!drive:A']);
+  const recent = { value: [{ id: 'local', name: 'Shared.docx', remoteItem: item('R') }, item('B')] };
+  assert.deepEqual(recentToFiles(recent).map((f) => f.id), ['b!drive:R', 'b!drive:B']);
+});

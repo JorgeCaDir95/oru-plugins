@@ -109,3 +109,9 @@ test('xlsxText writes each sheet as CSV with shared and inline strings', () => {
   });
   assert.equal(xlsxText(book), '## Sheet: Colors\nName,Hex\n"Green, primary",,#569C79');
 });
+
+test('searchQuery escapes quotes and backslashes and leaves folders out', async () => {
+  const { searchQuery } = await import('./drive-lib.mjs');
+  assert.equal(searchQuery("brand 'v2' \\ guide"),
+    "fullText contains 'brand \\'v2\\' \\\\ guide' and trashed = false and mimeType != 'application/vnd.google-apps.folder'");
+});

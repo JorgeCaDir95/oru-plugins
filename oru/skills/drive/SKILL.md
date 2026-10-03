@@ -17,6 +17,8 @@ The script: `node "${CLAUDE_PLUGIN_ROOT}/scripts/drive.mjs" <command>`. Every co
 | `logout` | Revokes the token and forgets it |
 | `list <folder> [--known <file>]` | Every file under a folder, recursively. With `--known`, only new or changed ones |
 | `read <file>` | One file as text, with its `contentHash` |
+| `search <words> [--limit n]` | Files anywhere in the user's Drive (name or content), no link needed |
+| `recent [--limit n]` | The most recently modified files |
 
 `<folder>` and `<file>` are Drive links or ids.
 
@@ -25,6 +27,10 @@ The script: `node "${CLAUDE_PLUGIN_ROOT}/scripts/drive.mjs" <command>`. Every co
 1. Run `status`. If connected, report the account and call `mark_connected` (`connector: "google_drive"`, `connected: true`, the email, your client name).
 2. If not, ask permission and run `login`. It opens the browser; when it prints `connected: true`, call `mark_connected`.
 3. If it says there is no Google OAuth client yet, tell the user exactly what it printed: they need the "Desktop app" OAuth client JSON from Google Cloud saved at `~/.oru/google-oauth-client.json`. Do not try to create it yourself.
+
+## On demand
+
+When the user asks about their documents and Oru doesn't know the answer, `search` (or `recent`) answers without any link. `read` what you need, answer with links, then send what you read to Oru with `ingest_batch` so it knows next time (see the `oru` skill, "Documents on demand").
 
 ## Index (incremental)
 

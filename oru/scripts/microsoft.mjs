@@ -14,6 +14,9 @@
 //                                         --known (get_sync_state documents as JSON),
 //                                         only new or changed ones
 //   microsoft.mjs read <file>             one file as text, ready for ingest_batch
+//   microsoft.mjs search <text> [--limit n]  files anywhere in OneDrive, SharePoint and
+//                                         Teams whose name or content matches
+//   microsoft.mjs recent [--limit n]      the files the user used most recently
 //
 // <source> is a OneDrive/SharePoint/Teams link, `me` (your OneDrive) or
 // `drive:<driveId>`. <file> is a link or a `<driveId>:<itemId>` from `list`.
@@ -22,7 +25,9 @@ import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync }
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { DOCX, PDF, PPTX, XLSX, changedFiles, docxText, pptxText, xlsxText } from './drive-lib.mjs';
-import { CONVERTIBLE_TO_PDF, isMicrosoftUrl, parseItemKey, shareId, toFile } from './microsoft-lib.mjs';
+import {
+  CONVERTIBLE_TO_PDF, isMicrosoftUrl, parseItemKey, recentToFiles, searchHitsToFiles, shareId, toFile,
+} from './microsoft-lib.mjs';
 
 const ORU_DIR = join(homedir(), '.oru');
 const TOKEN_FILE = join(ORU_DIR, 'microsoft.json');
@@ -249,6 +254,25 @@ async function listFolder(root) {
   return files;
 }
 
+const pageSize = (limit) => Math.min(Math.max(Number(limit) || 20, 1), 100);
+
+async function search(text, limit) {
+  if (!text?.trim()) fail('Pass the words to search for.');
+  // One query over OneDrive, SharePoint and Teams files the user can read.
+  const res = await fetch(`${GRAPH}/search/query`, {
+    method: 'POST',
+    headers: { authorization: `Bearer ${await accessToken()}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ requests: [{ entityTypes: ['driveItem'], query: { queryString: text }, from: 0, size: pageSize(limit) }] }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`Microsoft Graph search failed (${res.status}): ${body.error?.message ?? res.statusText}`);
+  print({ query: text, files: searchHitsToFiles(body) });
+}
+
+async function recent(limit) {
+  print({ files: recentToFiles(await graph(`/me/drive/recent?$top=${pageSize(limit)}`)) });
+}
+
 async function list(target, knownFile) {
   const root = await resolveItem(target);
   const all = await listFolder(root);
@@ -312,7 +336,9 @@ try {
   else if (command === 'sources') await sources();
   else if (command === 'list') await list(positional[0], flag('--known'));
   else if (command === 'read') await read(positional[0]);
-  else fail('Usage: microsoft.mjs login-start | login-finish | status | logout | sources | list <source> [--known file.json] | read <file>');
+  else if (command === 'search') await search(positional.join(' '), flag('--limit'));
+  else if (command === 'recent') await recent(flag('--limit'));
+  else fail('Usage: microsoft.mjs login-start | login-finish | status | logout | sources | search <text> [--limit n] | recent [--limit n] | list <source> [--known file.json] | read <file>');
 } catch (error) {
   fail(error instanceof Error ? error.message : String(error));
 }

@@ -19,6 +19,8 @@ The script: `node "${CLAUDE_PLUGIN_ROOT}/scripts/microsoft.mjs" <command>`. Ever
 | `sources` | The user's OneDrive, their Teams and followed SharePoint sites, each with a `url` and a `source` |
 | `list <source> [--known <file>]` | Every file under a folder, recursively. With `--known`, only new or changed ones |
 | `read <file>` | One file as text, with its `contentHash` |
+| `search <words> [--limit n]` | Files anywhere in OneDrive, SharePoint and Teams (name or content), no link needed |
+| `recent [--limit n]` | The files the user used most recently |
 
 `<source>` is a OneDrive/SharePoint/Teams link, `me` (the user's OneDrive) or `drive:<driveId>` from `sources`. `<file>` is a link or the `id` from `list`.
 
@@ -28,6 +30,10 @@ The script: `node "${CLAUDE_PLUGIN_ROOT}/scripts/microsoft.mjs" <command>`. Ever
 2. If not, ask permission and run `login-start`. Show the user its `tell` line exactly, e.g. "Open https://login.microsoft.com/device and enter the code ABCD-1234".
 3. Then run `login-finish` (it waits up to the code's expiry). When it prints `connected: true`, call `mark_connected`.
 4. If it says there is no Microsoft app yet, show the user exactly what it printed (they register one in Microsoft Entra, see the plugin README). Do not try to create it yourself.
+
+## On demand
+
+When the user asks about their documents and Oru doesn't know the answer, `search` (or `recent`) answers without any link. `read` what you need, answer with links, then send what you read to Oru with `ingest_batch` so it knows next time (see the `oru` skill, "Documents on demand").
 
 ## Choose what Oru learns from
 

@@ -38,6 +38,12 @@ export function driveId(raw) {
   return null;
 }
 
+/** A Drive search query: files whose name or content contains `text`, not trashed, not folders. */
+export function searchQuery(text) {
+  const escaped = String(text).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  return `fullText contains '${escaped}' and trashed = false and mimeType != '${GOOGLE_FOLDER}'`;
+}
+
 /**
  * Files to read: those Oru does not hold yet, holds with a different
  * modifiedTime, or failed to index. `known` is get_sync_state's `documents`

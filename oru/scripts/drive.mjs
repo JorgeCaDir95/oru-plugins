@@ -11,6 +11,9 @@
 //                                       --known (get_sync_state documents as
 //                                       JSON), only new or changed ones
 //   drive.mjs read <file>               one file as text, ready for ingest_batch
+//   drive.mjs search <text> [--limit n] files anywhere in the user's Drive whose
+//                                       name or content matches, no link needed
+//   drive.mjs recent [--limit n]        the most recently modified files
 //
 // <folder>/<file> is a Drive link or id. Output is JSON on stdout; errors go
 // to stderr with a non-zero exit code.
@@ -22,7 +25,7 @@ import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
   DOCX, GOOGLE_DOC, GOOGLE_FOLDER, GOOGLE_SHEET, GOOGLE_SLIDES, PDF, PPTX, XLSX,
-  changedFiles, docxText, driveId, pptxText, toCsv, xlsxText,
+  changedFiles, docxText, driveId, pptxText, searchQuery, toCsv, xlsxText,
 } from './drive-lib.mjs';
 
 const ORU_DIR = join(homedir(), '.oru');
@@ -219,6 +222,36 @@ async function listFolder(rootId) {
   return files;
 }
 
+// Everywhere the user can read: My Drive, files shared with them and shared drives.
+async function findFiles({ q, orderBy, limit }) {
+  const url = new URL(`${DRIVE}/files`);
+  url.search = new URLSearchParams({
+    q,
+    fields: `files(${FILE_FIELDS})`,
+    pageSize: String(Math.min(Math.max(Number(limit) || 20, 1), 100)),
+    corpora: 'allDrives',
+    supportsAllDrives: 'true',
+    includeItemsFromAllDrives: 'true',
+    ...(orderBy ? { orderBy } : {}),
+  }).toString();
+  const page = await google(url.toString());
+  return (page.files ?? []).map((f) => ({
+    id: f.id, name: f.name, mimeType: f.mimeType, modifiedTime: f.modifiedTime, url: f.webViewLink,
+    size: f.size ? Number(f.size) : null,
+  }));
+}
+
+async function search(text, limit) {
+  if (!text?.trim()) fail('Pass the words to search for.');
+  print({ query: text, files: await findFiles({ q: searchQuery(text), limit }) });
+}
+
+async function recent(limit) {
+  print({ files: await findFiles({
+    q: `trashed = false and mimeType != '${GOOGLE_FOLDER}'`, orderBy: 'modifiedTime desc', limit,
+  }) });
+}
+
 async function list(target, knownFile) {
   const id = driveId(target);
   if (!id) fail('Pass a Google Drive folder or file link (or id).');
@@ -323,7 +356,9 @@ try {
   else if (command === 'logout') await logout();
   else if (command === 'list') await list(positional[0], flag('--known'));
   else if (command === 'read') await read(positional[0]);
-  else fail('Usage: drive.mjs login | status | logout | list <folder> [--known file.json] | read <file>');
+  else if (command === 'search') await search(positional.join(' '), flag('--limit'));
+  else if (command === 'recent') await recent(flag('--limit'));
+  else fail('Usage: drive.mjs login | status | logout | search <text> [--limit n] | recent [--limit n] | list <folder> [--known file.json] | read <file>');
 } catch (error) {
   fail(error instanceof Error ? error.message : String(error));
 }
