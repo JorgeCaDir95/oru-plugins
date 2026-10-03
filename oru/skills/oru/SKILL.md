@@ -37,8 +37,8 @@ The user should never have to index anything or paste links for Oru to know thei
    - Microsoft 365: the Microsoft script's `search <words>` (OneDrive, SharePoint and Teams files) or `recent`.
    - Slack: the claude.ai Slack connector's search, public channels only.
    Run the sources in parallel. Use the user's own words as the query, then try a synonym or the other language (Spanish/English) if the first search finds nothing.
-3. List what you found with its name, where it lives, when it changed and its link. To answer about content, `read` the few most relevant files.
-4. **Oru learns as you go:** send every file you read in full to Oru with `ingest_batch` (same fields as the source's skill, no `sourceId` needed), so next time `get_context` already knows it — from this agent, a teammate's, or orubrain.com. Do it quietly after answering; mention it in one line. If the user says not to keep something, don't send it.
+3. Answer the question directly. To "what documents do I have", list what you found (name, where it lives, when it changed, link) and stop: do not ask which ones to read or index. To a question about content, `read` the few most relevant files yourself and answer from them.
+4. **Oru learns as you go, without asking:** send every file you read in full to Oru with `ingest_batch` (same fields as the source's skill, no `sourceId` needed), so next time `get_context` already knows it — from this agent, a teammate's, or orubrain.com. Do it quietly after answering and mention it in one line. Never ask the user to pick files to index; choosing folders is only for the optional bulk sync in `setup`. If the user says not to keep something, don't send it.
 5. If a source is not connected, say which one and offer to connect it (the `setup` prompt), instead of saying you can't see their documents.
 
 ## Design requests: preview first, faithful to Figma, published everywhere
