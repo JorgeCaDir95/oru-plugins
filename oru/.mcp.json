@@ -2,7 +2,10 @@
   "mcpServers": {
     "orubrain": {
       "type": "http",
-      "url": "${user_config.oru_url}/api/mcp"
+      "url": "${user_config.oru_url}/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${user_config.api_token}"
+      }
     }
   }
 }

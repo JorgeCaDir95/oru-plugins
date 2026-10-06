@@ -20,8 +20,8 @@
     },
     "api_token": {
       "type": "string",
-      "title": "Oru access key (optional)",
-      "description": "Only for the hook that adds Oru context to each prompt. Signing in to Oru through /mcp covers everything else, so you can leave this empty. Create one in orubrain.com → Agents → Advanced.",
+      "title": "Oru access key",
+      "description": "Your Oru access key (orubrain.com → Agents → Create access key; tick \"Let Oru learn from this agent\" so it can save). Used to connect to Oru and by the context hook. Leave empty once Oru offers sign-in, and sign in from /mcp instead.",
       "sensitive": true
     }
   }
