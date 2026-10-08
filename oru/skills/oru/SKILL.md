@@ -60,8 +60,9 @@ The user should never have to index anything or paste links for Oru to know thei
 
 ## Design requests: preview first, faithful to Figma, published everywhere
 
-When the user asks to generate, design, or mock up something ("Oru, generate a link", "make me a design of Rendi-Pro"), the goal is a page that matches the Figma design exactly: same layout, sizes, colors, type, texts and images.
+When the user asks to generate, design, or mock up something ("Oru, generate a link", "make me a design of Rendi-Pro"), the goal is a page on brand: the brand's own colors, type and components, and, for screens that exist in Figma, an exact match of their layout, sizes, texts and images.
 
+0. **Get the brand** — call `get_brand` (with `workspace`) first, for every design request: a page, a deck, a mockup, an image prompt. Follow it: paste its `design.css` (the brand's tokens as CSS variables) into the page and use those variables, its fonts, its palette and its components; follow the rules and voice in its `design.md`. Never fall back to your own default look. If `found` is false, say the project has no design system yet and offer to build one (e.g. `clone_website` from the brand's site, or indexing its Figma).
 1. **Find the screens** — call `get_context` for the product and the screens involved. Evidence fragments from Figma carry the frame's link (`url`, with `node-id`).
 2. **Get each frame from Oru** — call `get_frame(url)` for every screen. It returns the frame's `designCode` (Figma's own design code, as indexed) and its `assets`, each with a `ref` (`oru-asset:<id>`) and a short-lived `downloadUrl`. This needs no Figma call.
    - If `found` is false, `designCode` is null, or an image is missing, and the Figma MCP is connected: call `get_design_context` for that node, keep each image with `ingest_asset`, and re-send the frame with `ingest_source` (`content` = summary, `designCode` = the full output) so Oru has it next time.
