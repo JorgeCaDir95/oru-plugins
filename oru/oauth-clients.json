@@ -1,0 +1,5 @@
+{
+  "_comment": "Orubrain's own OAuth clients, so nobody has to register one. An installed app's client id (and Google's desktop client secret) is not confidential: each person still signs in and consents with their own account, PKCE protects the Google sign-in, and Microsoft uses device-code sign-in with no secret. A file in ~/.oru overrides these.",
+  "google": { "client_id": "", "client_secret": "" },
+  "microsoft": { "client_id": "", "tenant": "common" }
+}

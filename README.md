@@ -76,7 +76,7 @@ which Claude Code keeps in your system's secure storage; an `ORUBRAIN_MCP_TOKEN`
 shell still works. Without a key the hook stays silent and the agent still reaches Oru through the MCP.
 
 Codex: the plugin's hooks are not wired yet; Oru leads there through the server's instructions
-and `AGENTS-FRAGMENT.md`.
+and `AGENTS-FRAGMENT.md`, and the agent saves the conversation itself with the MCP's `save_session`.
 
 ## Google Drive
 
@@ -87,10 +87,12 @@ copy of your files, only what it indexes from their text.
 `scripts/drive.mjs` signs in with Google's **read-only** Drive permission and stores the token in
 `~/.oru/google-drive.json` (readable only by you). `logout` revokes it.
 
-It needs a Google OAuth client of type **Desktop app**, with the Google Drive API and Google Sheets
-API enabled, saved as `~/.oru/google-oauth-client.json` (the JSON Google Cloud lets you download).
-Until Orubrain's own client is verified by Google, an unverified client works for up to 100 test
-users you add on its consent screen.
+It signs in with **Orubrain's own Google client**, shipped in `oru/oauth-clients.json`, so nobody
+registers anything. A desktop client's id and secret are not confidential (Google's guidance for
+installed apps): each person still consents with their own account and PKCE protects the sign-in.
+Until Google verifies it, the client works for up to 100 test users added on its consent screen.
+A company that wants its own app saves its **Desktop app** client JSON as
+`~/.oru/google-oauth-client.json`, which overrides Orubrain's.
 
 | File | Read as |
 | --- | --- |

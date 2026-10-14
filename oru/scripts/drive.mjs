@@ -22,7 +22,9 @@ import { spawn } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { homedir, tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { pickGoogleClient } from './oauth-clients-lib.mjs';
 import {
   DOCX, GOOGLE_DOC, GOOGLE_FOLDER, GOOGLE_SHEET, GOOGLE_SLIDES, PDF, PPTX, XLSX,
   changedFiles, docxText, driveId, pptxText, searchQuery, toCsv, xlsxText,
@@ -34,6 +36,9 @@ const TOKEN_FILE = join(ORU_DIR, 'google-drive.json');
 // client's secret is not confidential (Google's own guidance for installed
 // apps); what protects the user is the consent screen and PKCE.
 const CLIENT_FILE = join(ORU_DIR, 'google-oauth-client.json');
+// Orubrain's own clients ship with the plugin; a file in ~/.oru overrides them.
+const BUNDLED_CLIENTS = join(dirname(fileURLToPath(import.meta.url)), '..', 'oauth-clients.json');
+const bundledClients = () => (existsSync(BUNDLED_CLIENTS) ? JSON.parse(readFileSync(BUNDLED_CLIENTS, 'utf8')) : null);
 const SCOPES = ['https://www.googleapis.com/auth/drive.readonly', 'openid', 'email'];
 const DRIVE = 'https://www.googleapis.com/drive/v3';
 const MAX_DOWNLOAD_BYTES = 25 * 1024 * 1024;
@@ -49,13 +54,12 @@ function fail(message) {
 const print = (value) => process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
 
 function oauthClient() {
-  if (!existsSync(CLIENT_FILE)) {
-    fail(`No Google OAuth client yet. In Google Cloud, create an OAuth client of type "Desktop app" with the Drive API enabled, download its JSON and save it as ${CLIENT_FILE}.`);
+  const own = existsSync(CLIENT_FILE) ? JSON.parse(readFileSync(CLIENT_FILE, 'utf8')) : null;
+  const client = pickGoogleClient(own, bundledClients());
+  if (!client) {
+    fail(`This version of the oru plugin has no Google sign-in client yet. Update the plugin, or (for a company's own app) create a Google Cloud OAuth client of type "Desktop app" with the Drive API enabled and save its JSON as ${CLIENT_FILE}.`);
   }
-  const json = JSON.parse(readFileSync(CLIENT_FILE, 'utf8'));
-  const client = json.installed ?? json.web ?? json;
-  if (!client.client_id) fail(`${CLIENT_FILE} has no client_id.`);
-  return { clientId: client.client_id, clientSecret: client.client_secret ?? '' };
+  return client;
 }
 
 function saveToken(token) {

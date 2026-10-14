@@ -23,7 +23,9 @@
 import { createHash } from 'node:crypto';
 import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { pickMicrosoftClient } from './oauth-clients-lib.mjs';
 import { DOCX, PDF, PPTX, XLSX, changedFiles, docxText, pptxText, xlsxText } from './drive-lib.mjs';
 import {
   CONVERTIBLE_TO_PDF, isMicrosoftUrl, parseItemKey, recentToFiles, searchHitsToFiles, shareId, toFile,
@@ -35,6 +37,8 @@ const PENDING_FILE = join(ORU_DIR, 'microsoft-pending.json');
 // {"client_id": "…", "tenant": "common"} for a public Microsoft Entra app
 // with "Allow public client flows" on. No secret: device-code sign-in.
 const CLIENT_FILE = join(ORU_DIR, 'microsoft-oauth-client.json');
+// Orubrain's own app ships with the plugin; a file in ~/.oru overrides it.
+const BUNDLED_CLIENTS = join(dirname(fileURLToPath(import.meta.url)), '..', 'oauth-clients.json');
 const SCOPES = 'offline_access openid profile User.Read Files.Read.All Sites.Read.All Team.ReadBasic.All';
 const GRAPH = 'https://graph.microsoft.com/v1.0';
 const ITEM_FIELDS = 'id,name,file,folder,lastModifiedDateTime,webUrl,size,parentReference';
@@ -57,11 +61,11 @@ function writePrivate(path, value) {
 const readJson = (path) => (existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : null);
 
 function oauthClient() {
-  const client = readJson(CLIENT_FILE);
-  if (!client?.client_id) {
-    fail(`No Microsoft app yet. Register a public app in Microsoft Entra (see the plugin README) and save {"client_id": "…", "tenant": "common"} as ${CLIENT_FILE}.`);
+  const client = pickMicrosoftClient(readJson(CLIENT_FILE), readJson(BUNDLED_CLIENTS));
+  if (!client) {
+    fail(`This version of the oru plugin has no Microsoft sign-in app yet. Update the plugin, or (for a company's own app) register a public app in Microsoft Entra (see the plugin README) and save {"client_id": "…", "tenant": "common"} as ${CLIENT_FILE}.`);
   }
-  return { clientId: client.client_id, tenant: client.tenant || 'common' };
+  return client;
 }
 
 async function tokenRequest(tenant, params) {
