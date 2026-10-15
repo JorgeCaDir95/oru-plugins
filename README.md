@@ -15,6 +15,8 @@ With it installed, your coding agent:
   PowerPoint), read-only, with the Google token kept on your machine,
 - **brings your Microsoft 365 files into Oru** (OneDrive, SharePoint and Teams files), read-only,
 - **brings the Slack channels you pick into Oru** (never direct messages),
+- **brings your company's file server into Oru** (shared drives, SFTP) through Oru Connect,
+  set up with `npx @orubrain/connect setup` in your own terminal,
 - **saves your Claude Code conversations to Oru** (your private project chat, no tool output, secrets
   stripped), so what you decide while working becomes context too,
 - **sets all of it up as a checklist**: it detects what is connected, you tick what to connect, and
