@@ -1,6 +1,6 @@
 ---
 name: sync
-description: Sync a bridge connector (Figma, Google Drive, Microsoft 365 or Slack) into Oru — reads it on this machine and pushes only changed documents to Oru's index. Use after /oru:setup has connected a connector, or any time to refresh it incrementally.
+description: Sync a bridge connector (Figma, Google Drive, Microsoft 365 or Slack) into Oru — reads it on this machine (Slack: Oru reads it itself) and pushes only changed documents to Oru's index. Use after /oru:setup has connected a connector, or any time to refresh it incrementally.
 arguments: [connector]
 user-invocable: true
 ---

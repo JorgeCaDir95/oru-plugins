@@ -63,7 +63,7 @@ Cursor and VS Code have one-click install buttons on orubrain.com → **Agents**
 | `oru/skills/drive` | Reads Google Drive read-only through `scripts/drive.mjs` and sends the text to Oru |
 | `oru/skills/microsoft` | Reads OneDrive, SharePoint and Teams files read-only through `scripts/microsoft.mjs` |
 | `oru/skills/conversations` | Signs this machine in to Oru and saves this agent's conversations; pause with "don't save this" |
-| `oru/skills/slack` | Reads the Slack channels you pick through Claude Code's claude.ai Slack connector |
+| `oru/skills/slack` | Connects your own Slack with a sign-in link; Oru reads and searches it through Slack's API, as you |
 | `oru/skills/sync` | Re-syncs the saved Figma files and Drive folders, only what changed |
 | `oru/agents/oru-indexer.md` | Subagent that reads Figma or Drive and sends what changed to Oru |
 | `oru/scripts/drive.mjs` | Dependency-free Google Drive reader: `login`, `status`, `list`, `read`, `logout` |
@@ -140,10 +140,11 @@ PDFs (and older Office files, which Graph converts to PDF) handed to your agent.
 
 ## Slack
 
-Slack is read through Claude Code's **claude.ai Slack connector** (Slack's official MCP server), so
-there is nothing to install: sign in from `/mcp` → **claude.ai Slack**. Oru only reads the public
-channels you pick, one document per channel per month, and never direct messages. Slack is not
-available in Codex yet.
+Each person connects their own Slack once: Oru's setup gives you a link, you sign in to Slack with
+your own account and allow read access (no admin needed). Oru then reads and searches Slack itself
+through Slack's API, as you, so it works the same from Claude Code, Codex or any agent connected to
+Oru, with no Slack MCP connector. It only reads the public channels you pick, one document per channel
+per month, and never direct messages.
 
 ## Develop
 
