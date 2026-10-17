@@ -50,7 +50,7 @@ The user should never have to index anything or paste links for Oru to know thei
 
 1. Call `get_context` first. If it answers the question, answer from it and cite its sources.
 2. If it doesn't, or they asked to find or list documents, search the connected sources live, without asking for links:
-   - Google Drive: the Drive script's `search <words>` (name and content, across My Drive, files shared with them and shared drives) or `recent`.
+   - Google Drive: Oru's `search_drive` (name and content, across My Drive, files shared with them and shared drives; no words → the most recent).
    - Microsoft 365: the Microsoft script's `search <words>` (OneDrive, SharePoint and Teams files) or `recent`.
    - Slack: Oru's `search_slack` (as the user, public channels only). Never a Slack MCP connector.
    Run the sources in parallel. Use the user's own words as the query, then try a synonym or the other language (Spanish/English) if the first search finds nothing.

@@ -60,13 +60,12 @@ Cursor and VS Code have one-click install buttons on orubrain.com → **Agents**
 | `oru/.mcp.json`, `oru/mcp.json` | The `orubrain` MCP server (Claude Code / Codex) |
 | `oru/skills/oru` | How to work through Oru: context first, learnings saved, preview-first design |
 | `oru/skills/setup` | Links the folder to a project; a checklist that detects, connects and indexes each source |
-| `oru/skills/drive` | Reads Google Drive read-only through `scripts/drive.mjs` and sends the text to Oru |
+| `oru/skills/drive` | Connects your own Google Drive with a sign-in link; Oru reads, searches and indexes it through Google's API, as you |
 | `oru/skills/microsoft` | Reads OneDrive, SharePoint and Teams files read-only through `scripts/microsoft.mjs` |
 | `oru/skills/conversations` | Signs this machine in to Oru and saves this agent's conversations; pause with "don't save this" |
 | `oru/skills/slack` | Connects your own Slack with a sign-in link; Oru reads and searches it through Slack's API, as you |
 | `oru/skills/sync` | Re-syncs the saved Figma files and Drive folders, only what changed |
 | `oru/agents/oru-indexer.md` | Subagent that reads Figma or Drive and sends what changed to Oru |
-| `oru/scripts/drive.mjs` | Dependency-free Google Drive reader: `login`, `status`, `list`, `read`, `logout` |
 | `oru/scripts/microsoft.mjs` | Dependency-free Microsoft Graph reader: `login-start`, `login-finish`, `status`, `sources`, `list`, `read`, `logout` |
 | `oru/hooks/hooks.json` | Claude Code: states the folder at session start, adds Oru context to each prompt, saves each reply's new messages to Oru |
 | `oru/scripts/oru.mjs`, `oru/scripts/capture.mjs` | Oru sign-in for this machine, and the hook that sends conversations in the background |
@@ -82,19 +81,12 @@ and `AGENTS-FRAGMENT.md`, and the agent saves the conversation itself with the M
 
 ## Google Drive
 
-Oru learns from Drive the same way it learns from Figma: your agent reads the folders you choose on
-your machine and sends their text to Oru. Oru never receives your Google credentials and keeps no
-copy of your files, only what it indexes from their text.
-
-`scripts/drive.mjs` signs in with Google's **read-only** Drive permission and stores the token in
-`~/.oru/google-drive.json` (readable only by you). `logout` revokes it.
-
-It signs in with **Orubrain's own Google client**, shipped in `oru/oauth-clients.json`, so nobody
-registers anything. A desktop client's id and secret are not confidential (Google's guidance for
-installed apps): each person still consents with their own account and PKCE protects the sign-in.
-Until Google verifies it, the client works for up to 100 test users added on its consent screen.
-A company that wants its own app saves its **Desktop app** client JSON as
-`~/.oru/google-oauth-client.json`, which overrides Orubrain's.
+Each person connects their own Google Drive once: Oru's setup gives you a link, you sign in to Google
+with your own account and allow **read-only** access. Oru then reads, searches and indexes Drive
+itself through Google's API, as you, so it works the same from Claude Code, Codex or any agent
+connected to Oru. Nothing is installed and no Google credential is kept on your machine; Oru keeps
+your sign-in sealed on its server, and you can revoke it any time from your Google account
+(myaccount.google.com/permissions).
 
 | File | Read as |
 | --- | --- |
@@ -102,8 +94,7 @@ A company that wants its own app saves its **Desktop app** client JSON as
 | Google Sheets, Excel | CSV, one section per sheet |
 | Google Slides, PowerPoint | Text, one section per slide |
 | Word | Text |
-| PDF | Handed to your agent, which reads it |
-| Images, video, other binaries | Skipped |
+| PDF, images, video, other binaries | Skipped |
 
 ## Conversations
 
