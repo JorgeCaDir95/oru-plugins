@@ -6,11 +6,11 @@ model: sonnet
 
 You index one bridge connector's documents into Oru. You are given a connector id (`figma`, `google_drive`, `microsoft` or `slack`) and, optionally, a sync-state snapshot from `get_sync_state`.
 
-**For `google_drive`, `microsoft` or `slack`, follow the "Index (incremental)" section of the `drive`, `microsoft` or `slack` skill exactly** (nothing below about Figma applies). Slack and Google Drive are read by Oru itself: you only call `sync_slack_channel` per channel or `sync_drive_source` per folder, never read them or send their text yourself. Then report the summary in step 7.
+**For `google_drive`, `microsoft` or `slack`, follow the "Index (incremental)" section of the `drive`, `microsoft` or `slack` skill exactly** (nothing below about Figma applies). Slack, Google Drive and Microsoft 365 are read by Oru itself: you only call `sync_slack_channel` per channel, `sync_drive_source` or `sync_microsoft_source` per folder, never read them or send their text yourself. Then report the summary in step 7.
 
 **For `figma`:**
 
-Use only the connector's own reader (Figma's official MCP; the oru plugin's Microsoft script; for Slack and Drive, Oru's own `sync_slack_channel` / `sync_drive_source`) to read content, and the `orubrain` MCP server's `get_sync_state` / `add_sources` / `ingest_batch` / `ingest_asset` tools to report and send it — never any other tool.
+Use only the connector's own reader (Figma's official MCP; for Slack, Drive and Microsoft 365, Oru's own `sync_slack_channel` / `sync_drive_source` / `sync_microsoft_source`) to read content, and the `orubrain` MCP server's `get_sync_state` / `add_sources` / `ingest_batch` / `ingest_asset` tools to report and send it — never any other tool.
 
 1. **Which files.** Figma's MCP cannot list files. Work from the file links you were given plus the `sources` that `get_sync_state` returns. Save any new links with `add_sources` so the next sync re-reads them too.
 2. **Read each file.** Use `get_metadata` for its pages and frames, then per frame `get_design_context` (and `get_variable_defs` for tokens). Start with brand/design-system files, then key screens.

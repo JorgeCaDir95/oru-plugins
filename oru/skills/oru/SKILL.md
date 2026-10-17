@@ -51,7 +51,7 @@ The user should never have to index anything or paste links for Oru to know thei
 1. Call `get_context` first. If it answers the question, answer from it and cite its sources.
 2. If it doesn't, or they asked to find or list documents, search the connected sources live, without asking for links:
    - Google Drive: Oru's `search_drive` (name and content, across My Drive, files shared with them and shared drives; no words → the most recent).
-   - Microsoft 365: the Microsoft script's `search <words>` (OneDrive, SharePoint and Teams files) or `recent`.
+   - Microsoft 365: Oru's `search_microsoft` (OneDrive, SharePoint and Teams files; no words → the most recent).
    - Slack: Oru's `search_slack` (as the user, public channels only). Never a Slack MCP connector.
    Run the sources in parallel. Use the user's own words as the query, then try a synonym or the other language (Spanish/English) if the first search finds nothing.
 3. Answer the question directly. To "what documents do I have", list what you found (name, where it lives, when it changed, link) and stop: do not ask which ones to read or index. To a question about content, `read` the few most relevant files yourself and answer from them.

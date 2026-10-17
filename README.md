@@ -61,12 +61,11 @@ Cursor and VS Code have one-click install buttons on orubrain.com → **Agents**
 | `oru/skills/oru` | How to work through Oru: context first, learnings saved, preview-first design |
 | `oru/skills/setup` | Links the folder to a project; a checklist that detects, connects and indexes each source |
 | `oru/skills/drive` | Connects your own Google Drive with a sign-in link; Oru reads, searches and indexes it through Google's API, as you |
-| `oru/skills/microsoft` | Reads OneDrive, SharePoint and Teams files read-only through `scripts/microsoft.mjs` |
+| `oru/skills/microsoft` | Connects your own Microsoft 365 with a sign-in link; Oru reads, searches and indexes OneDrive, SharePoint and Teams files through Microsoft Graph, as you |
 | `oru/skills/conversations` | Signs this machine in to Oru and saves this agent's conversations; pause with "don't save this" |
 | `oru/skills/slack` | Connects your own Slack with a sign-in link; Oru reads and searches it through Slack's API, as you |
 | `oru/skills/sync` | Re-syncs the saved Figma files and Drive folders, only what changed |
 | `oru/agents/oru-indexer.md` | Subagent that reads Figma or Drive and sends what changed to Oru |
-| `oru/scripts/microsoft.mjs` | Dependency-free Microsoft Graph reader: `login-start`, `login-finish`, `status`, `sources`, `list`, `read`, `logout` |
 | `oru/hooks/hooks.json` | Claude Code: states the folder at session start, adds Oru context to each prompt, saves each reply's new messages to Oru |
 | `oru/scripts/oru.mjs`, `oru/scripts/capture.mjs` | Oru sign-in for this machine, and the hook that sends conversations in the background |
 | `oru/CLAUDE-FRAGMENT.md`, `oru/AGENTS-FRAGMENT.md` | Optional lines for your project's `CLAUDE.md` / `AGENTS.md` |
@@ -109,25 +108,15 @@ project in orubrain.com. Oru learns from what you say there like it does from it
 
 ## Microsoft 365
 
-`scripts/microsoft.mjs` reads OneDrive, SharePoint sites and the files of your Teams through
-Microsoft Graph, **read-only** (`Files.Read.All`, `Sites.Read.All`, plus `Team.ReadBasic.All` to list
-your Teams). It signs in with a device code: it shows a link and a code, you enter the code at
-Microsoft, and the token is stored in `~/.oru/microsoft.json` (readable only by you). Teams messages
-are not read.
+Each person connects their own Microsoft 365 once: Oru's setup gives you a link, you sign in to
+Microsoft with your own account and allow **read-only** access to your files (`Files.Read.All`,
+`Sites.Read.All`, `Team.ReadBasic.All` to list your Teams). Some companies require their IT admin to
+approve Oru the first time. Oru then reads, searches and indexes OneDrive, SharePoint sites and the
+files of your Teams itself, through Microsoft Graph, as you, from any agent. Nothing is installed and
+no Microsoft credential is kept on your machine. Teams messages are not read.
 
-It needs a Microsoft Entra app (until Orubrain's own is published):
-
-1. In the [Azure portal](https://portal.azure.com) → **Microsoft Entra ID** → **App registrations** →
-   **New registration**. Any name (e.g. "Oru"); supported accounts: **any organizational directory
-   and personal Microsoft accounts**; no redirect URI.
-2. **Authentication** → **Allow public client flows** → **Yes**.
-3. **API permissions** → Microsoft Graph → **Delegated**: `Files.Read.All`, `Sites.Read.All`,
-   `Team.ReadBasic.All`, `User.Read`, `offline_access`.
-4. Save `{"client_id": "<Application (client) ID>", "tenant": "common"}` as
-   `~/.oru/microsoft-oauth-client.json`.
-
-Files are read the same way as from Drive: Word and PowerPoint as text, Excel as CSV per sheet,
-PDFs (and older Office files, which Graph converts to PDF) handed to your agent.
+Files are read the same way as from Drive: Word and PowerPoint as text, Excel as CSV per sheet;
+PDFs, older Office files and images are skipped.
 
 ## Slack
 
