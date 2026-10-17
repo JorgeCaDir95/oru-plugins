@@ -13,7 +13,8 @@ The script: `node "${CLAUDE_PLUGIN_ROOT}/scripts/oru.mjs" <command>`. Every comm
 | Command | What it does |
 |---|---|
 | `status` | `signedIn`, the account, which Oru, and whether `savingConversations` is on |
-| `login --url ${user_config.oru_url}` | Signs this machine in to Oru in the browser; keeps the token in `~/.oru/` |
+| `link <code> --url ${user_config.oru_url}` | Signs this machine in with a one-time code from the `link_this_machine` tool: no second sign-in. The key stays in `~/.oru/` and is never printed |
+| `login --url ${user_config.oru_url}` | Signs this machine in to Oru in the browser (only for an agent connected with an access key) |
 | `logout` | Forgets the token on this machine |
 | `pause <sessionId>` | Stops saving one session, from now on |
 | `resume <sessionId>` | Saves it again from the next reply |
@@ -21,7 +22,7 @@ The script: `node "${CLAUDE_PLUGIN_ROOT}/scripts/oru.mjs" <command>`. Every comm
 ## Connect (from setup)
 
 1. Run `status`. Signed in and saving → show "✅ Claude Code conversations — saved to Oru".
-2. Not signed in → ask permission, run `login`, and tell the user to approve in the browser. If it says this Oru does not offer sign-in yet, tell them to set the plugin's **Oru access key** option instead (orubrain.com → Agents → Advanced).
+2. Not signed in → it is the same Oru account the agent is already signed in with, so do it without asking: call the `orubrain` server's `link_this_machine` (with your client name) and immediately run `link <code>`. Never show or repeat the code to the user. Only if `link_this_machine` says this agent uses an access key, ask permission and run `login` instead.
 3. Saving off → it was turned off in the plugin's **Save conversations** setting; say so and leave it.
 
 ## "Don't save this"

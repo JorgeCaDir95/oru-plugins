@@ -4,6 +4,9 @@
 // discover Oru's authorization server, register as a public client, sign in
 // in the browser with PKCE. The token stays in ~/.oru/oru.json.
 //
+//   oru.mjs link <code> [--url https://orubrain.com]  sign in with a one-time code
+//                                                from the MCP's link_this_machine
+//                                                (no second browser sign-in, D-144)
 //   oru.mjs login [--url https://orubrain.com]   sign in (opens the browser)
 //   oru.mjs status                               signed in? saving conversations?
 //   oru.mjs logout                               forget the token
@@ -112,11 +115,31 @@ async function login(baseUrl) {
   print({ signedIn: true, email: claims.email ?? null, oru: base });
 }
 
+async function link(code, baseUrl) {
+  if (!/^oru-link-[A-Za-z0-9_-]{20,64}$/.test(String(code ?? ''))) fail('Pass the code link_this_machine returned (oru-link-…).');
+  const base = baseUrl.replace(/\/+$/, '');
+  const res = await getJson(`${base}/api/agent-link/redeem`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ code }),
+  });
+  if (!res.ok || !res.body?.token) fail(res.body?.error ?? `Oru refused the code (${res.status}).`);
+  // An access key: no refresh, it lasts until expiresAt or until revoked on the Agents page.
+  writePrivate(TOKEN_FILE, {
+    base, kind: 'key', access_token: res.body.token, refresh_token: null,
+    expires_at: Date.parse(res.body.expiresAt) || Date.now() + 365 * 24 * 60 * 60 * 1000,
+    email: null, label: res.body.label ?? null,
+  });
+  // The key is never printed: it stays in ~/.oru/oru.json.
+  print({ signedIn: true, oru: base, label: res.body.label ?? null });
+}
+
 function status() {
   const token = readJson(TOKEN_FILE);
   print({
     signedIn: Boolean(token?.refresh_token || token?.access_token),
     email: token?.email ?? null,
+    via: token?.kind === 'key' ? 'linked from the MCP sign-in' : token?.access_token ? 'browser sign-in' : null,
     oru: token?.base ?? defaultOruUrl(),
     savingConversations: savingConversations(),
   });
@@ -138,12 +161,13 @@ function setPaused(sessionId, paused) {
 const [command, ...args] = process.argv.slice(2);
 const flag = (name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : undefined; };
 try {
-  if (command === 'login') await login(flag('--url') || defaultOruUrl());
+  if (command === 'link') await link(args[0], flag('--url') || defaultOruUrl());
+  else if (command === 'login') await login(flag('--url') || defaultOruUrl());
   else if (command === 'status') status();
   else if (command === 'logout') logout();
   else if (command === 'pause') setPaused(args[0], true);
   else if (command === 'resume') setPaused(args[0], false);
-  else fail('Usage: oru.mjs login [--url <oru>] | status | logout | pause <sessionId> | resume <sessionId>');
+  else fail('Usage: oru.mjs link <code> [--url <oru>] | login [--url <oru>] | status | logout | pause <sessionId> | resume <sessionId>');
 } catch (error) {
   fail(error instanceof Error ? error.message : String(error));
 }

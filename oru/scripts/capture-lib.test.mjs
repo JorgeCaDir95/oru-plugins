@@ -49,3 +49,7 @@ test('slash commands keep their name and arguments', () => {
     content: '<command-message>oru:sync</command-message>\n<command-name>/oru:sync</command-name>\n<command-args>drive</command-args>' } })]);
   assert.equal(turns[0].text, '/oru:sync drive');
 });
+
+test('one-time Oru link codes are redacted too', () => {
+  assert.equal(redactSecrets('node oru.mjs link oru-link-AbCdEfGhIjKlMnOpQrStUvWxYz012345'), 'node oru.mjs link [redacted]');
+});
