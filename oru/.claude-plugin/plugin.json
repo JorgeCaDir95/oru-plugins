@@ -1,7 +1,7 @@
 {
   "name": "oru",
   "description": "Oru — your team's shared brain for business, brand and design. Connects the orubrain MCP server, keeps Oru in the lead on every task, bridges Figma, Google Drive, Microsoft 365 and Slack into it, and saves your agent conversations.",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "author": {
     "name": "Orubrain"
   },
@@ -21,7 +21,7 @@
     "api_token": {
       "type": "string",
       "title": "Oru access key",
-      "description": "Your Oru access key (orubrain.com → Agents → Create access key; tick \"Let Oru learn from this agent\" so it can save). Used to connect to Oru and by the context hook. Leave empty once Oru offers sign-in, and sign in from /mcp instead.",
+      "description": "Optional. Only for the per-prompt context hook (orubrain.com → Agents → Create access key). The Oru connection itself signs in with your Orubrain account from /mcp → orubrain → Authenticate.",
       "sensitive": true
     }
   }
